@@ -46,7 +46,7 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
 
     private lateinit var repo: ReminderDataSource
     private lateinit var context: Application
-
+    //Initialize instantTaskExecutorRule
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -54,7 +54,7 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
     @Before
     fun init(){
         stopKoin()
-        context = getApplicationContext()
+        context = getApplicationContext() //Initialize context
 
         // Setup Koin - same as in MyApp module
         val myModule = module {
@@ -96,40 +96,30 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
                 "l1",
                 0.0,0.0)
 
-            repo.saveReminder(r)
+            repo.saveReminder(r) // Save r (ReminderDTO)
 
-            // WHEN
+            // WHEN launch ReminderListFragment
             launchFragmentInContainer<ReminderListFragment>(null,R.style.AppTheme)
 
             // THEN
-            onView(ViewMatchers.withText(r.title)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-            onView(ViewMatchers.withText(r.description)).check(
-                ViewAssertions.matches(
-                    ViewMatchers.isDisplayed()
-                )
-            )
-            onView(ViewMatchers.withText(r.location)).check(
-                ViewAssertions.matches(
-                    ViewMatchers.isDisplayed()
-                )
-            )
+            onView(ViewMatchers.withText(r.title)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))      //check title Appears on Screen
+            onView(ViewMatchers.withText(r.description)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))//check description Appears on Screen
+            onView(ViewMatchers.withText(r.location)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))   //check location Appears on Screen
         }
     }
 
     @Test
     fun givenReminderListScreen_clickFAB_navigatesToSaveReminderScreen(){
         // GIVEN
-        val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-        val navigationController = mock(NavController::class.java)
+        val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme) //Initialize scenario to launch ReminderListFragment
+        val navigationController = mock(NavController::class.java) //Initialize navigationController using mock
 
-        scenario.onFragment {
-            Navigation.setViewNavController(it.view!!, navigationController)
-        }
+        scenario.onFragment { Navigation.setViewNavController(it.view!!, navigationController) }
 
-        // WHEN
+        // WHEN Click on Add reminder Floating Button
         onView(withId(R.id.addReminderFAB)).perform(click())
 
-        // THEN
+        // THEN Navigate To SaveReminderScreen
         verify(navigationController).navigate(ReminderListFragmentDirections.toSaveReminder())
 
     }
