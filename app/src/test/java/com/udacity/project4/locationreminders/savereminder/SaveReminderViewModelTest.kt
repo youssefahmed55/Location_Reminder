@@ -21,9 +21,12 @@ import org.koin.core.context.stopKoin
 class SaveReminderViewModelTest {
 
     // Executes each task synchronously using Architecture Components.
+
+    //Initialize instantExecutorRule
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
+    //Initialize mainCoroutineRule
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
@@ -37,13 +40,13 @@ class SaveReminderViewModelTest {
     @Test
     fun givenDataIsNull_validateData_returnsFalse(){
         // GIVEN
-        val r: ReminderDataItem? = null
-        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource())
+        val r: ReminderDataItem? = null     //Initialize r (ReminderDataItem) equal null
+        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource()) //Initialize saveReminderViewModel
 
-        // WHEN
+        // WHEN Valid Entered Data
         val isValidated = saveReminderViewModel.validateEnteredData(r)
 
-        // THEN
+        // THEN It Returns False
         assert(!isValidated!!)
 
     }
@@ -51,16 +54,14 @@ class SaveReminderViewModelTest {
     @Test
     fun givenDataLocIsNull_validateData_returnsFalse(){
         // GIVEN
-        val reminders = mutableListOf<ReminderDTO>()
-        val reminder = ReminderDataItem(
-            "TestTitle", "TestDescription", null, 0.0, 0.0, "testId"
-        )
-        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource(reminders))
+        val reminders = mutableListOf<ReminderDTO>() //Initialize reminders (mutableListOf<ReminderDTO>)
+        val reminder = ReminderDataItem("TestTitle", "TestDescription", null, 0.0, 0.0, "testId") //Initialize reminder
+        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource(reminders)) //Initialize saveReminderViewModel
 
-        // WHEN
+        // WHEN Valid Entered Data
         val isValidat = saveReminderViewModel.validateEnteredData(reminder)
 
-        // THEN
+        // THEN It Returns False
         assert(!isValidat)
 
     }
@@ -68,14 +69,12 @@ class SaveReminderViewModelTest {
     @Test
     fun givenDataTitleIsNull_validateData_returnsFalse(){
         // GIVEN
-        val reminders = mutableListOf<ReminderDTO>()
-        val reminder = ReminderDataItem(
-            null, "descriptionTest", "loc", 0.0, 0.0, "idTest"
-        )
-        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource(reminders))
-        // WHEN
+        val reminders = mutableListOf<ReminderDTO>()  //Initialize reminders (mutableListOf<ReminderDTO>)
+        val reminder = ReminderDataItem(null, "descriptionTest", "loc", 0.0, 0.0, "idTest") //Initialize reminder
+        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource(reminders)) //Initialize saveReminderViewModel
+        // WHEN Valid Entered Data
         val isValidat = saveReminderViewModel.validateEnteredData(reminder)
-        // THEN
+        // THEN It Returns False
         assert(!isValidat)
 
     }
@@ -83,34 +82,30 @@ class SaveReminderViewModelTest {
     @Test
     fun givenValidData_validateData_returnsTrue(){
         // GIVEN
-        val reminders = mutableListOf<ReminderDTO>()
-        val reminder = ReminderDataItem(
-            null, "descriptionTest", "loc", 0.0, 0.0, "idTest"
-        )
-        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource(reminders))
+        val reminders = mutableListOf<ReminderDTO>() //Initialize reminders (mutableListOf<ReminderDTO>)
+        val reminder = ReminderDataItem(null, "descriptionTest", "loc", 0.0, 0.0, "idTest") //Initialize reminder
+        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource(reminders)) //Initialize saveReminderViewModel
 
-        // WHEN
+        // WHEN Valid Entered Data
         val isValidat = saveReminderViewModel.validateEnteredData(reminder)
 
-        // THEN
+        // THEN It Returns true
         assert(!isValidat)
 
     }
 
     @Test
-    fun givenReminder_saveReminder_addsReminderToList() {
+    fun givenReminder_saveReminder_returnsTrue() {
 
         // GIVEN
-        val reminders = mutableListOf<ReminderDTO>()
-        val reminder = ReminderDataItem(
-            null, "descriptionTest", "loc", 0.0, 0.0, "idTest"
-        )
-        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource(reminders))
+        val reminders = mutableListOf<ReminderDTO>() //Initialize reminders (mutableListOf<ReminderDTO>)
+        val reminder = ReminderDataItem(null, "descriptionTest", "loc", 0.0, 0.0, "idTest") //Initialize reminder
+        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), FakeDataSource(reminders)) //Initialize saveReminderViewModel
 
-        // WHEN
+        // WHEN Save Reminder
         saveReminderViewModel.saveReminder(reminder)
 
-        // THEN
+        // THEN Return True
         val hasSaved = reminders[0].id == "idTest"
         assert(hasSaved)
 

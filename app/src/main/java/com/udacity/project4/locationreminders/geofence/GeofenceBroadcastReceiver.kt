@@ -20,8 +20,8 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
-        if (intent.action == ACTION_GEOFENCE_EVENT) {
-            GeofenceTransitionsJobIntentService.enqueueWork(context, intent)
+        if (intent.action == ACTION_GEOFENCE_EVENT) { //if intent Action Equal Same Name Of ACTION_GEOFENCE_EVENT
+            GeofenceTransitionsJobIntentService.enqueueWork(context, intent)  //enqueue the geofencing transition events
         }
 
     }

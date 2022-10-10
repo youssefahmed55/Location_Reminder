@@ -23,11 +23,8 @@ class ReminderListFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding =
-            DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_reminders, container, false
-            )
+        //initialization binding
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_reminders, container, false)
         binding.viewModel = _viewModel
 
         setHasOptionsMenu(true)
@@ -67,7 +64,7 @@ class ReminderListFragment : BaseFragment() {
         val adapter = RemindersListAdapter {
         }
 
-//        setup the recycler view using the extension function
+        //setup the recycler view using the extension function
         binding.reminderssRecyclerView.setup(adapter)
     }
 
@@ -78,8 +75,8 @@ class ReminderListFragment : BaseFragment() {
                 AuthUI.getInstance().signOut(requireContext())
                     .addOnCompleteListener {
                         val intent = Intent(activity, AuthenticationActivity::class.java)
-                        startActivity(intent)
-                        requireActivity().finish()
+                        startActivity(intent)      //Start Show AuthenticationActivity
+                        requireActivity().finish() //Finish Activity
 
                     }
             }

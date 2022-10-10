@@ -52,15 +52,15 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
+        //Initialization binding
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
 
         binding.lifecycleOwner = this
         binding.viewModel = _viewModel
 
-        val mapFragment = childFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        //Initialization mapFragment
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this) //getMapAsync for mapFragment
 
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
@@ -74,8 +74,8 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
 
     private fun setOnClickOnSaveButton() {
         binding.saveLocation.setOnClickListener{
-            if(marker != null) {
-                onSelectedLocation()
+            if(marker != null) { //If Marker not Equal Null
+                onSelectedLocation()  //Fun to Save title,lat,lon to ViewModel then Navigate Back
             }else{
                 Toast.makeText(context,getString(R.string.Select_a_location_First_Please),Toast.LENGTH_LONG).show()
             }
@@ -83,19 +83,19 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        myMap = googleMap
+        myMap = googleMap      //initialization myMap
         setPoiClick(myMap)     //Set Poi Click
         setMapStyle(myMap)     //Set Map Style
-        setMapLongClick(myMap)
-        enableMyLocation()
+        setMapLongClick(myMap) //Set LongClick on Map
+        enableMyLocation()     //Enable My Location
     }
     @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
-        if (isPermissionGranted()) {
-            myMap.isMyLocationEnabled = true
+        if (isPermissionGranted()) { //if Permission is Granted
+            myMap.isMyLocationEnabled = true //Appears My Location
             Toast.makeText(context, "Location permission is granted.", Toast.LENGTH_SHORT).show()
-        } else {
+        } else { //Else request ACCESS_FINE_LOCATION And ACCESS_COARSE_LOCATION Permissions From User
             reqPermissionLauncher.launch(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -104,7 +104,7 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
             )
         }
     }
-
+    //Initialization reqPermissionLauncher To Enable My Location Appears On Screen
     @RequiresApi(Build.VERSION_CODES.Q)
     val reqPermissionLauncher =
         registerForActivityResult(
@@ -130,10 +130,10 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
 
 
     private fun onSelectedLocation() {
-        _viewModel.reminderSelectedLocationStrMutableLiveData.value = title
-        _viewModel.lat.value = lat
-        _viewModel.long.value = long
-        _viewModel.navigationCommand.postValue(NavigationCommand.Back)
+        _viewModel.reminderSelectedLocationStrMutableLiveData.value = title //Set reminderSelectedLocationStrMutableLiveData Value
+        _viewModel.lat.value = lat                                          //Set lat Value
+        _viewModel.long.value = long                                        //Set long Value
+        _viewModel.navigationCommand.postValue(NavigationCommand.Back)      //Navigate Back
     }
 
 
@@ -142,6 +142,7 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        //Set Style OF Map
         R.id.normal_map -> {
             myMap.mapType = GoogleMap.MAP_TYPE_NORMAL
             true
@@ -171,14 +172,16 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
             )
 
 
-           if (marker != null)
-               marker!!.remove()
+           if (marker != null)   //if marker not equal null
+               marker!!.remove() //Remove marker from screen
 
+           //Initialization marker
            marker = map.addMarker(MarkerOptions()
                 .position(latLng)
                 .title(getString(R.string.dropped_pin))
                 .snippet(snippet)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
+
             reminderSelectedLocation = snippet
             title = getString(R.string.Custom_Location)
             lat= latLng.latitude
@@ -189,30 +192,27 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
 
     private fun setPoiClick(map: GoogleMap) {
         map.setOnPoiClickListener { poii ->
+            if (marker != null)    //if marker not equal null
+                marker!!.remove()  //Remove marker from screen
 
-            if (marker != null)
-                marker!!.remove()
-
+            //Initialization marker
             marker = map.addMarker(
                 MarkerOptions()
                     .position(poii.latLng)
                     .title(poii.name)
             )
-            val zoomLevel = 15f
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(poii.latLng, zoomLevel))
-            marker?.showInfoWindow()
+            val zoomLevel = 15f //Initialization zoomLevel value
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(poii.latLng, zoomLevel)) //Move and Zoom Camera to poi Location Selected
+            marker?.showInfoWindow()     //Show info of poi location on Screen
+
             title = poii.name
             lat= poii.latLng.latitude
             long = poii.latLng.longitude
-            val snippet = String.format(
-                Locale.getDefault(),
-                "Lat: %1$.5f, Long: %2$.5f",
-                lat,
-                long
-            )
+            val snippet = String.format(Locale.getDefault(), "Lat: %1$.5f, Long: %2$.5f", lat, long) // A Snippet is Additional text that's displayed below the title.
             reminderSelectedLocation = snippet
+            isLocationSelect=true
         }
-        isLocationSelect=true
+
     }
 
     private fun setMapStyle(map: GoogleMap) {
@@ -248,7 +248,7 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQ_CODE_BACKGROUND) {
-            checkDeviceLocationSettings()
+            checkDeviceLocationSettings() //Check Device Location Setting
         }
     }
    /* @TargetApi(Build.VERSION_CODES.Q)
@@ -275,24 +275,22 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
         }
     }*/
     private fun checkDeviceLocationSettings(resolve: Boolean = true) {
-        val locationRequest = create().apply {
+       // Initialization locationRequest
+       val locationRequest = create().apply {
             priority = PRIORITY_LOW_POWER
         }
-        val reqBuilder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-        val settingsClient = LocationServices.getSettingsClient(activity!!)
-        val locationSettingsResponseTask =
-            settingsClient.checkLocationSettings(reqBuilder.build())
+        val reqBuilder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)  // Initialization reqBuilder
+        val settingsClient = LocationServices.getSettingsClient(activity!!)   // Initialization settingsClient
+        val locationSettingsResponseTask = settingsClient.checkLocationSettings(reqBuilder.build())  // Initialization locationSettingsResponseTask
         locationSettingsResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve) {
                 try {
-                    exception.startResolutionForResult(
-                        activity!!,
-                        REQ_TURN_DEVICE_LOCATION_ON
-                    )
+                    exception.startResolutionForResult(activity!!, REQ_TURN_DEVICE_LOCATION_ON)
                 } catch (sendEx: IntentSender.SendIntentException) {
                     Log.d(TAG, "Error getting location settings: " + sendEx.message)
                 }
             } else {
+                //Show SnackBar
                 Snackbar.make(
                     view!!,
                     R.string.location_required_error, Snackbar.LENGTH_INDEFINITE

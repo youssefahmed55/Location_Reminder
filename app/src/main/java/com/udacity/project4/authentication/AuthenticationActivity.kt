@@ -1,10 +1,9 @@
 package com.udacity.project4.authentication
 
-import android.app.Activity
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -19,7 +18,7 @@ import com.udacity.project4.locationreminders.RemindersActivity
  */
 class AuthenticationActivity : AppCompatActivity() {
     private lateinit var binding : ActivityAuthenticationBinding
-    private val viewModel by viewModels<LoginViewModel>()
+    private val viewModel by viewModels<LoginViewModel>() //Initialize viewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //initialization binding
@@ -32,7 +31,9 @@ class AuthenticationActivity : AppCompatActivity() {
     private fun observeAuthState() {
         viewModel.authenticationState.observe(this) { authState ->
             when (authState) {
-                LoginViewModel.AuthenticationState.AUTHENTICATED -> {startActivity(Intent(this, RemindersActivity::class.java)) ; finish()}
+                LoginViewModel.AuthenticationState.AUTHENTICATED -> {startActivity(Intent(this, RemindersActivity::class.java)) //Start Reminder Activity
+                                                                      finish() //Finish Activity
+                                                                      }
                 else -> Log.d(TAG, "Auth state doesn't require any UI change $authState")
             }
         }
@@ -40,9 +41,8 @@ class AuthenticationActivity : AppCompatActivity() {
 
 
     private fun launchSignIn() {
-        val providers = arrayListOf(AuthUI.IdpConfig.EmailBuilder().build(), AuthUI.IdpConfig.GoogleBuilder().build())
-        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(), SIGN_IN_RESULT_CODE
-        )
+        val providers = arrayListOf(AuthUI.IdpConfig.EmailBuilder().build(), AuthUI.IdpConfig.GoogleBuilder().build()) //Initialize providers (EmailBuilder,GoogleBuilder)
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(), SIGN_IN_RESULT_CODE) //Start AuthUI
     }
 
    

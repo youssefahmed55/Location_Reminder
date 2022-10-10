@@ -25,23 +25,23 @@ class RemindersListViewModelTest {
     private lateinit var remindersListViewModel: RemindersListViewModel
     private lateinit var ds: FakeDataSource
 
-    // Executes each task synchronously using Architecture Components.
+    // Initialize instantExecutorRule
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
+    // Initialize mainCoroutineRule
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
     @Before
     fun setup() {
         stopKoin()
-        ds = FakeDataSource()
-        ds.reminders = createReminders()
-        remindersListViewModel = RemindersListViewModel(
-            ApplicationProvider.getApplicationContext(),
-            ds)
+        ds = FakeDataSource()            // Initialize ds (FakeDataSource)
+        ds.reminders = createReminders() // set reminders to ds (FakeDataSource)
+        remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), ds)  // Initialize remindersListViewModel
     }
 
+    //Create Reminders to Save them in ds (FakeDataSource)
     private fun createReminders(): MutableList<ReminderDTO> {
 
         val reminder1 = ReminderDTO("TestTitle1","TestDescirption1",
@@ -60,30 +60,30 @@ class RemindersListViewModelTest {
         // GIVEN
         //reminders in setup fun
 
-        // WHEN
+        // WHEN load Reminders
         remindersListViewModel.loadReminders()
 
-        // THEN
+        // THEN Check Size Of remindersList is > 0
         assert(remindersListViewModel.remindersList.value?.size!! > 0)
     }
 
     @Test
     fun givenEmptyList_loadReminders_addsZeroRemindersToList() = runBlockingTest {
-        // GIVEN
+        // GIVEN Deleted Reminders
         ds.deleteAllReminders()
-        // WHEN
+        // WHEN load Reminders
         remindersListViewModel.loadReminders()
-        // THEN
+        // THEN Check Size Of remindersList is 0
         assert(remindersListViewModel.remindersList.value?.size == 0)
     }
 
     @Test
     fun givenDataSourceError_loadReminders_showsError(){
         // Giving - repo with 2 reminders
-        ds.setReturnError(true)
-        // When -
+        ds.setReturnError(true) //Set return Error true
+        // When load Reminders
         remindersListViewModel.loadReminders()
-        // Then -
+        // Then Show Error in Snack Bar
         val error = remindersListViewModel.showSnackBar.getOrAwaitValue()
         assert(error.contains("Exception"))
     }
@@ -94,27 +94,27 @@ class RemindersListViewModelTest {
         // GIVEN
         //reminders in setup fun
 
-        // When
+        // When Delete All Reminders
         ds.deleteAllReminders()
         remindersListViewModel.loadReminders()
 
-        // Then - showNoData should be true
+        // Then show No Data is true
         assert(remindersListViewModel.showNoData.value!!)
 
     }
 
     @Test
     fun showLoading_() {
-        // Given - repo with reminders
+        // Given repo with reminders
         mainCoroutineRule.pauseDispatcher()
 
-        // When - loading reminders
+        // When loading reminders
         remindersListViewModel.loadReminders()
 
-        // Then - show loading
+        // Then show loading
         assert(remindersListViewModel.showLoading.getOrAwaitValue() == true)
 
-        // Then - hide loading
+        // Then hide loading
         mainCoroutineRule.resumeDispatcher()
         assert(remindersListViewModel.showLoading.getOrAwaitValue() == false)
     }

@@ -26,10 +26,9 @@ import org.junit.runner.RunWith
 @MediumTest
 class RemindersLocalRepositoryTest {
 
+    //Initialize instantExecutorRule
     @get:Rule
     var instantExecutorRule=InstantTaskExecutorRule()
-
-    @get:Rule
 
 
     private lateinit var remindersDaoo: FakeRemindersDao
@@ -37,43 +36,40 @@ class RemindersLocalRepositoryTest {
 
     @Before
     fun setupRepo() {
-        remindersDaoo = FakeRemindersDao()
-        remindersRepository = RemindersLocalRepository(remindersDaoo, Dispatchers.Unconfined)
+        remindersDaoo = FakeRemindersDao()       //Initialize remindersDaoo (FakeRemindersDao)
+        remindersRepository = RemindersLocalRepository(remindersDaoo, Dispatchers.Unconfined) //Initialize remindersRepository
 
     }
 
     @Test
     fun givenReminders_getReminderById_returnsCorrectReminder() =runBlocking {
         // Given
-        val r1 = ReminderDTO("t1", "d1", "l1",
-            0.0, 0.0)
+        val r1 = ReminderDTO("t1", "d1", "l1", 0.0, 0.0)
+        val r2 = ReminderDTO("t2", "d2", "l2", 0.0, 0.0)
 
-        val r2 = ReminderDTO("t2", "d2", "l2",
-            0.0, 0.0)
-
-        remindersDaoo.saveReminder(r1)
-        remindersDaoo.saveReminder(r2)
+        remindersDaoo.saveReminder(r1)  //Save r1
+        remindersDaoo.saveReminder(r2)  //Save r2
 
         // When
-        val lr1 = remindersRepository.getReminder(r1.id)
-        val lr2 = remindersRepository.getReminder(r2.id)
+        val lr1 = remindersRepository.getReminder(r1.id) //Get reminder by Id
+        val lr2 = remindersRepository.getReminder(r2.id) //Get reminder by Id
 
         lr1 as Result.Success
         lr2 as Result.Success
 
         // Then lr1
-        assertThat(lr1, Matchers.`is`(Matchers.notNullValue()))
-        assertThat(lr1.data.location, Matchers.`is`(r1.location))
-        assertThat(lr1.data.title, Matchers.`is`(r1.title))
-        assertThat(lr1.data.latitude, Matchers.`is`(r1.latitude))
-        assertThat(lr1.data.longitude, Matchers.`is`(r1.longitude))
+        assertThat(lr1, Matchers.`is`(Matchers.notNullValue()))     //Check if lr1 not null value
+        assertThat(lr1.data.location, Matchers.`is`(r1.location))   //Check if lr1 location equal r1 location
+        assertThat(lr1.data.title, Matchers.`is`(r1.title))         //Check if lr1 title equal r1 title
+        assertThat(lr1.data.latitude, Matchers.`is`(r1.latitude))   //Check if lr1 latitude equal r1 latitude
+        assertThat(lr1.data.longitude, Matchers.`is`(r1.longitude)) //Check if lr1 longitude equal r1 longitude
 
         // Then lr2
-        assertThat(lr2, Matchers.`is`(Matchers.notNullValue()))
-        assertThat(lr2.data.location, Matchers.`is`(r2.location))
-        assertThat(lr2.data.title, Matchers.`is`(r2.title))
-        assertThat(lr2.data.latitude, Matchers.`is`(r2.latitude))
-        assertThat(lr2.data.longitude, Matchers.`is`(r2.longitude))
+        assertThat(lr2, Matchers.`is`(Matchers.notNullValue()))     //Check if lr2 not null value
+        assertThat(lr2.data.location, Matchers.`is`(r2.location))   //Check if lr2 location equal r2 location
+        assertThat(lr2.data.title, Matchers.`is`(r2.title))         //Check if lr2 title equal r2 title
+        assertThat(lr2.data.latitude, Matchers.`is`(r2.latitude))   //Check if lr2 latitude equal r2 latitude
+        assertThat(lr2.data.longitude, Matchers.`is`(r2.longitude)) //Check if lr2 longitude equal r2 longitude
     }
 
 
@@ -82,39 +78,36 @@ class RemindersLocalRepositoryTest {
     fun givenEmpty_getReminderById_returnsReminderNotFoundError() = runBlocking {
 
         // GIVEN
-        val r1 = ReminderDTO("t1", "desc1", "loc1",
-            0.0, 0.0)
-        remindersDaoo.deleteAllReminders()
+        val r1 = ReminderDTO("t1", "desc1", "loc1", 0.0, 0.0)
+        remindersDaoo.deleteAllReminders() //Delete All Reminders
 
         // WHEN
-        val lrr = remindersRepository.getReminder(r1.id)
-
-        // THEN
+        val lrr = remindersRepository.getReminder(r1.id) //Get reminder by Id
         lrr as Result.Error
+
+        // THEN Returns Reminder not found
         assertThat(lrr.message, Matchers.`is`("Reminder not found!"))
     }
 
     @Test
     fun givenReminders_deleteAllReminders_deletesRemindersInDb() =runBlocking {
         // GIVEN
-        val r1 = ReminderDTO("t1", "desc1", "loc1",
-            0.0, 0.0)
+        val r1 = ReminderDTO("t1", "desc1", "loc1", 0.0, 0.0)
+        val r2 = ReminderDTO("t2", "desc2", "loc2", 0.0, 0.0)
 
-        val r2 = ReminderDTO("t2", "desc2", "loc2",
-            0.0, 0.0)
-
-        remindersDaoo.saveReminder(r1)
-        remindersDaoo.saveReminder(r2)
+        remindersDaoo.saveReminder(r1)    //Save/Add r1
+        remindersDaoo.saveReminder(r2)    //Save/Add r2
 
         // WHEN
-        remindersDaoo.deleteAllReminders()
+        remindersDaoo.deleteAllReminders() //Delete All Reminders
 
-        val lr1 = remindersRepository.getReminder(r1.id)
-        val lr2 = remindersRepository.getReminder(r2.id)
-
-        // THEN
+        val lr1 = remindersRepository.getReminder(r1.id) //Get reminder by Id
+        val lr2 = remindersRepository.getReminder(r2.id) //Get reminder by Id
         lr1 as Result.Error
         lr2 as Result.Error
+
+
+        // THEN Returns Reminder not found
         assertThat(lr1.message, Matchers.`is`("Reminder not found!"))
         assertThat(lr2.message, Matchers.`is`("Reminder not found!"))
     }

@@ -56,7 +56,7 @@ class RemindersActivityTest : AutoCloseKoinTest() {
 
     @Before
     fun init() {
-        stopKoin()     //stop koin
+        stopKoin()   //stop koin
 
         // Setup koin module
         val myModule = module {
@@ -94,6 +94,7 @@ class RemindersActivityTest : AutoCloseKoinTest() {
      * Idling resources tell Espresso that the app is idle or busy. This is needed when operations
      * are not scheduled in the main Looper (for example when executed on a different thread).
      */
+    //Initialize dataBindingIdlingResource
     private val dataBindingIdlingResource = DataBindingIdlingResource()
 
     @Before
@@ -110,7 +111,7 @@ class RemindersActivityTest : AutoCloseKoinTest() {
         IdlingRegistry.getInstance().unregister(EspressoUtils.countingIdlingResource)
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
-
+    //fun to get Reminder Data
     private fun getReminder(): ReminderDTO {
         return ReminderDTO(
             title = "title",
@@ -124,22 +125,19 @@ class RemindersActivityTest : AutoCloseKoinTest() {
     @Test
     fun givenReminderInDb_remindersActivityLaunched_reminderOnScreen() = runBlocking {
         // GIVEN - reminder in db
-        val reminder = getReminder()
-        repo.saveReminder(reminder)
+        val reminder = getReminder()  //Initialize reminder
+        repo.saveReminder(reminder)   //Save Reminder
 
         // WHEN - RemindersActivity is launched
-        val scenario = ActivityScenario.launch(RemindersActivity::class.java)
-        dataBindingIdlingResource.monitorActivity(scenario)
+        val scenario = ActivityScenario.launch(RemindersActivity::class.java) //Initialize scenario to launch Reminder Activity
+        dataBindingIdlingResource.monitorActivity(scenario)   //Sets Reminder Activity Used From dataBindingIdlingResource
 
         // THEN - reminder is visible on screen
-        Espresso.onView(ViewMatchers.withText(reminder.title))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        Espresso.onView(ViewMatchers.withText(reminder.description))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        Espresso.onView(ViewMatchers.withText(reminder.location))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        Espresso.onView(ViewMatchers.withText(reminder.title)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))        //Check Reminder Title Appears on Screen
+        Espresso.onView(ViewMatchers.withText(reminder.description)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))  //Check description Appears on Screen
+        Espresso.onView(ViewMatchers.withText(reminder.location)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))     //Check location Appears on Screen
 
-        // Delay
+        // Delay 2 sec
         delay(2000)
 
     }
@@ -148,17 +146,16 @@ class RemindersActivityTest : AutoCloseKoinTest() {
     fun givenSaveReminderFragment_saveEmptyReminder_showsSnackbarError() { runBlocking {
 
         // GIVEN - saveReminderFragment launched
-        val scenario = launchFragmentInContainer<SaveReminderFragment>(Bundle(), R.style.AppTheme)
-        dataBindingIdlingResource.monitorFragment(scenario)
+        val scenario = launchFragmentInContainer<SaveReminderFragment>(Bundle(), R.style.AppTheme)  //Initialize scenario to launch SaveReminderFragment
+        dataBindingIdlingResource.monitorFragment(scenario) //Sets SaveReminderFragment Used From dataBindingIdlingResource
 
         // WHEN - save empty reminder
-        Espresso.onView(ViewMatchers.withId(R.id.saveReminder)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.saveReminder)).perform(ViewActions.click())  //Click On Floating Button to Save Reminder
 
         // THEN - snackbar error is visible
-        Espresso.onView(ViewMatchers.withId(com.google.android.material.R.id.snackbar_text))
-            .check(ViewAssertions.matches(ViewMatchers.withText(R.string.err_enter_title)))
+        Espresso.onView(ViewMatchers.withId(com.google.android.material.R.id.snackbar_text)).check(ViewAssertions.matches(ViewMatchers.withText(R.string.err_enter_title))) //Check Snack Bar Appears with Same Message
 
-
+        // Delay 2 sec
         delay(3000)
 
     }
@@ -168,34 +165,32 @@ class RemindersActivityTest : AutoCloseKoinTest() {
     fun givenRemindersActivityLaunched_createAndSaveReminder_reminderOnScreen() = runBlocking {
 
         // GIVEN - reminders activity is launched
-        val scenario = ActivityScenario.launch(RemindersActivity::class.java)
-        dataBindingIdlingResource.monitorActivity(scenario)
+        val scenario = ActivityScenario.launch(RemindersActivity::class.java)  //Initialize scenario to launch Reminder Activity
+        dataBindingIdlingResource.monitorActivity(scenario)                    //Sets Reminder Activity Used From dataBindingIdlingResource
 
         // WHEN - create and save reminder
-        Espresso.onView(ViewMatchers.withId(R.id.noDataTextView))
-            .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-        Espresso.onView(ViewMatchers.withId(R.id.addReminderFAB)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.reminderTitle))
-            .perform(ViewActions.typeText("youssef"))
-        Espresso.onView(ViewMatchers.withId(R.id.reminderDescription))
-            .perform(ViewActions.typeText("ahmed"))
-        Espresso.closeSoftKeyboard()
-        Espresso.onView(ViewMatchers.withId(R.id.selectLocation)).perform(ViewActions.click())
-        Thread.sleep(5000)
-        Espresso.onView(ViewMatchers.withId(R.id.map)).perform(ViewActions.longClick());
+        Espresso.onView(ViewMatchers.withId(R.id.noDataTextView)).check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))) //Check if noDataTextView Appears On Screen
+        Espresso.onView(ViewMatchers.withId(R.id.addReminderFAB)).perform(ViewActions.click())  //Click on Add Reminder Floating Button
+        Espresso.onView(ViewMatchers.withId(R.id.reminderTitle)).perform(ViewActions.typeText("youssef")) //Write title in First EditText
+        Espresso.onView(ViewMatchers.withId(R.id.reminderDescription)).perform(ViewActions.typeText("ahmed")) //Write description in Second EditText
+        Espresso.closeSoftKeyboard() //Close or Hide Keyboard
+        Espresso.onView(ViewMatchers.withId(R.id.selectLocation)).perform(ViewActions.click()) //Click on Select Location
+        // Delay 5 sec
+        delay(5000)
+        Espresso.onView(ViewMatchers.withId(R.id.map)).perform(ViewActions.longClick())  //Click Long Click in Screen To Select Location
 
-        Espresso.onView(ViewMatchers.withId(R.id.save_location)).perform(ViewActions.click())
-        Thread.sleep(2000)
+        Espresso.onView(ViewMatchers.withId(R.id.save_location)).perform(ViewActions.click()) //Click On Save Button
+        // Delay 2 sec
+        delay(2000)
 
-        // click on the Save Reminder button
+        // click on the Save Reminder Floating button
         Espresso.onView(ViewMatchers.withId(R.id.saveReminder)).perform(ViewActions.click())
 
-        // THEN - reminder is visible on screen with toast
-        Espresso.onView(ViewMatchers.withText(R.string.reminder_saved)).inRoot(ToastMatcher())
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        // THEN - Check reminder is visible on screen with toast
+        Espresso.onView(ViewMatchers.withText(R.string.reminder_saved)).inRoot(ToastMatcher()).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
-
-       delay(2000)
+        // Delay 2 sec
+        delay(2000)
 
     }
 }
