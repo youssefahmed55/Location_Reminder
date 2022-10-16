@@ -251,29 +251,7 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback{
             checkDeviceLocationSettings() //Check Device Location Setting
         }
     }
-   /* @TargetApi(Build.VERSION_CODES.Q)
-    private fun requestQVersionPermission() {
-        val hasForegroundPermission = ActivityCompat.checkSelfPermission(
-            activity!!,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
 
-        if (hasForegroundPermission) {
-            val hasBackgroundPermission = ActivityCompat.checkSelfPermission(
-                activity!!,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-            if (hasBackgroundPermission) {
-                checkDeviceLocationSettings()
-            } else {
-                ActivityCompat.requestPermissions(
-                    activity!!,
-                    arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                    REQ_CODE_BACKGROUND
-                )
-            }
-        }
-    }*/
     private fun checkDeviceLocationSettings(resolve: Boolean = true) {
        // Initialization locationRequest
        val locationRequest = create().apply {
